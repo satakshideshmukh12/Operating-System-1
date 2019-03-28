@@ -6,30 +6,30 @@ int main()
 	float s=0;
 	cout<<"enter number of processes\n";
 	cin>>n;
-	int a[n],ct[n],wt[n],p[n],b[n];
+	int at[n],ct[n],wt[n],p[n],bt[n];
 	cout<<"arrival time of processes:\n\n";
 	for(int i=0;i<n;i++)
 	{
 		p[i]=i+1;
 		cout<<"enter arrival time for p"<<p[i]<<"=";
-	cin>>a[i];
+	cin>>at[i];
 	}
 	cout<<"enter burst time of processes:\n\n";
 	for(int i=0;i<n;i++)
 	{
 		p[i]=i+1;
 		cout<<"enter burst time for p"<<p[i]<<"=";
-	cin>>b[i];
+	cin>>bt[i];
 	}
 	for(int i=0;i<n;i++)
 	{
 		for(int j=i+1;j<n;j++)
 		{
-			if(a[j]<a[i])
+			if(bt[j]<bt[i])
 			{
-				int t=a[j];
-				a[j]=a[i];
-				a[i]=t;
+				int t=bt[j];
+				bt[j]=bt[i];
+				bt[i]=t;
 				int temp=p[j];
 				p[j]=p[i];
 				p[i]=temp;
