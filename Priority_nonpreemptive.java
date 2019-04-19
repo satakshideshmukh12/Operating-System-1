@@ -1,68 +1,167 @@
-#include <iostream>
-#include <algorithm>
-using namespace std;
-typedef struct proccess
-{
-	int at,bt,pr,ct,ta,wt;
-	string pro_id;
-	
-}process;
-
-bool compare(process a,process b)
-{
-	return a.at<b.at;	
+public class priority_non_preemptive_scheduling {
 }
+class NonPreemptiveScheduling {
+    public int[] getWaitingList(int[] process, int[] arrival, int[] burst)
+    {
 
-bool compare2(process a,process b)
-{
-	return a.pr>b.pr;
-}
+        if(arrival[0]!=0)
+            return new int[]{0};
+        if(process.length!=arrival.length & process.length!=burst.length & arrival.length!=burst.length)
+            return new int[]{0};
 
-int main()
-{
-	process pro[10];
-	int n,i,j;
-	cout<<"Enter the number of process::";
-	cin>>n;
-	cout<<"Enter the process id arrival time burst time and priority :::";
+        for(int i=0;i<burst.length;i++)
+        {
+            if(burst[i]>=10 | burst[i]<=0)
+                return new int[]{0};
+        }
+        for(int i=0;i<arrival.length;i++)
+        {
+            for(int j=i;j<arrival.length;j++)
+            {
+                if(arrival[i]>arrival[j])
+                    return new int []{0};
+            }
 
-	for(i=0;i<n;i++)
-	{
-		cin>>pro[i].pro_id;
-		cin>>pro[i].at;
-		cin>>pro[i].bt;
-		cin>>pro[i].pr;
-	}
+        }
 
-	sort(pro,pro+n,compare);
-	pro[0].ct=pro[0].bt+pro[0].at;
-	pro[0].ta=pro[0].ct-pro[0].at;
-	pro[0].wt=pro[0].ta-pro[0].bt;
-	i=1;
+        for(int i=0;i<arrival.length;i++)
+        {
+            for(int j=i+1;j<arrival.length;j++)
+            {
+                if(arrival[i]==arrival[j])
+                    return new int []{0};
+            }
+        }
 
-	while(i<n-1)
-	{
 
-		for(j=i;j<n;j++)
-		{
-			if(pro[j].at>pro[i-1].ct)
-			break;
-		}
-		sort(pro+i,pro+i+(j-i),compare2);
-		pro[i].ct=pro[i-1].ct+pro[i].bt;
-		pro[i].ta=pro[i].ct-pro[i].at;
-		pro[i].wt=pro[i].ta-pro[i].bt;
-		i++;
-		}
-		pro[i].ct=pro[i-1].ct+pro[i].bt;
-		pro[i].ta=pro[i].ct-pro[i].at;
-		pro[i].wt=pro[i].ta-pro[i].bt;
+        int sum[] = new int[process.length];
+        for(int i=0;i<process.length;i++)
+        {
+            sum[i] = arrival[i]+burst[i];
+        }
 
-	for(i=0;i<n;i++)
-	{
-		//desplaying all the values
-		cout<<pro[i].pro_id<<"\t"<<pro[i].at<<"\t"<<pro[i].bt<<"\t"<<pro[i].ct<<"\t"<<pro[i].ta<<"\t"<<pro[i].wt<<"\t"<<pro[i].pr;
-		cout<<endl;
-	}
-	return 0;
+        int temp1,temp2,temp3;
+        for(int i=1;i<process.length;i++)
+        {
+            for(int j=i;j<process.length;j++)
+            {
+                if(sum[i]>sum[j])
+                {
+                    temp1 = process[i];
+                    process[i] = process[j];
+                    process[j] = temp1;
+
+                    temp2 = arrival[i];
+                    arrival[i] = arrival[j];
+                    arrival[j] = temp2;
+
+                    temp3 = burst[i];
+                    burst[i] = burst[j];
+                    burst[j] = temp3;
+                }
+            }
+        }
+
+        int starttime[] = new int[process.length];
+        int finaltime[] = new int[process.length];
+        starttime[0] = arrival[0];
+        finaltime[0] = burst[0];
+
+        for(int i=1;i<process.length;i++)
+        {
+            starttime[i] = finaltime[i-1];
+            finaltime[i] = starttime[i]+burst[i];
+        }
+        int waitingtime[] = new int[process.length];
+        for(int i=1;i<process.length;i++)
+        {
+            waitingtime[i] = finaltime[i] - (arrival[i]+burst[i]);
+
+        }
+        int temp4,temp5;
+        for(int i=0;i<process.length;i++)
+        {
+            for(int j=i;j<process.length;j++)
+            {
+                if(process[i]>process[j])
+                {
+                    temp4 = process[i];
+                    process[i] = process[j];
+                    process[j] = temp4;
+
+                    temp5 = waitingtime[i];
+                    waitingtime[i] = waitingtime[j];
+                    waitingtime[j] = temp5;
+                }
+            }
+        }
+
+        return waitingtime;
+    }
+
+
+
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+
+
+        //testcase 1:
+        try
+        {
+            int process[] = {1, 2, 3, 4};
+            int arrival[] = {0, 2, 4, 5};
+            int burst[] = {7, 4, 1, 4};
+            int[] output = new NonPreemptiveScheduling().getWaitingList(process, arrival, burst);
+            if(output!=null && output.length>0)
+                for (int i = 0; i < output.length; i++)
+                {
+                    System.out.print(output[i]);
+                }
+            System.out.println();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+//testcase 2:
+        try
+        {
+            int process[] = {1, 2, 3};
+            int arrival[] = {0, 4, 8};
+            int burst[] = {6, 2, 1};
+            int[] output = new NonPreemptiveScheduling().getWaitingList(process, arrival, burst);
+            if(output!=null && output.length>0)
+                for (int i = 0; i < output.length; i++)
+                {
+                    System.out.print(output[i]);
+                }
+            System.out.println();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+//testcase 3:
+        try
+        {
+            int process[] = {1, 2, 3, 4};
+            int arrival[] = {2, 0, 4, 5};
+            int burst[] = {7, 4, 1, 4};
+            int[] output = new NonPreemptiveScheduling().getWaitingList(process, arrival, burst);
+            if(output!=null && output.length>0)
+                for (int i = 0; i < output.length; i++)
+                {
+                    System.out.print(output[i]);
+                }
+            System.out.println();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }
